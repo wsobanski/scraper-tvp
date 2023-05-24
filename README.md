@@ -49,17 +49,17 @@ Ostatecznie udało się pozyskać ponad 250 tysięcy arykułów z różnych dome
 
 ```
 📦 scraper-tvp
-┣📂 articles metadata połączone metadane
+┣📂 articles metadata - połączone metadane
 ┃ ┗ 📜 joined_metadata_files.csv
-┣📂obtained content #logi wykonania scrpaera i finalny plik
+┣📂obtained content - logi wykonania scrapera i finalny plik
 ┃ ┣ 📜 full_results.csv
 ┃ ┗ 📜 logs.json
-┣📂 results #pobrane metadane w osobnych plikach
+┣📂 results - pobrane metadane w osobnych plikach
 ┃ ┗ 📜 results_domain_start-page-last-page.csv
-┣📂 src #kod
-┃ ┣ 📜 scraper_tvp_content.py
-┃ ┣ 📜 scraper_tvp_links.py 
-┃ ┗ 📜 text_processing.py (TODO)
+┗📂 src - kod
+  ┣ 📜 scraper_tvp_content.py
+  ┣ 📜 scraper_tvp_links.py 
+  ┗ 📜 text_processing.py (TODO)
 ```
 Kod został podzielony na moduły tworzące (przynajmniej w teorii) logiczny układ.  
 Role poszczególnych modułów są następujące:
@@ -76,7 +76,7 @@ Role poszczególnych modułów są następujące:
 
 
 ---
-### content scraper
+### 📜 content scraper
 
 Zadaniem programu `scraper_tvp_content.py` jest pobranie treści artykułów z danych linków.
 
@@ -89,12 +89,12 @@ Po pobraniu każdej serii program odczekuje losową ilość czasu. Prawdopodobie
 Pobrane dane zapisywane są do pliku z roszerzeniem `.csv`. Przy kolejnym wywołaniu funkcja z pliku `logs.json` wczytuje stan ostatniego wykonania i zaczyna pobierać dane od tego miejsca. 
 
 ---
-### links scraper
+### 📜 links scraper
 
 Program `scrper_tvp_links.py` pobiera linki do artykułów z danej domeny ze stron o numerach zadeklarowanych przez użytkownika. Linki wraz z tytułem oraz leadem artykułu zapisywane są do pliku z roszerzeniem `.csv`. Pobrane dane wczytywane są następnie przez moduł `scraper_tvp_content.py` i przez niego pobierane są zawartości artykułów.
 
 ---
-### utils 
+### 📜 utils 
 
 Moduł pomocniczy zawiera różne funkcje związane z wykonywaniem kodu.
 
@@ -104,7 +104,7 @@ Moduł pomocniczy zawiera różne funkcje związane z wykonywaniem kodu.
 
 Poniżej przedstawiono schematyczny przepływ danych. `link_scraper.py` wysyła zapytanie do strony i zwraca linki do artykułów, które następnie są zapisywane do pliku `.csv`. Każde wywołanie programu tworzy nowy plik. Wszystkie pliki są następnie łączone w jeden, który wczytywany jest przez `content_scraper.py`. Scraper ponownie łączy się ze stroną (tym razem za pośrednictwem linku do artykułów) i w rezultacie zwraca plik z pobranymi danymi. Dodatkowo generowany jest plik z logami, który weryfikowany jest przy każdym kolejnym wywołaniu funkcji.
 
-![przepływ danych](dataflow.png)
+![dataflow](https://github.com/WiktorSob/scraper-tvp/assets/94312553/60ca5c69-e353-4b83-b774-5fe526be9dc6)
 
 
 ## Przykładowe użycie
@@ -135,7 +135,7 @@ Wykonanie programu odbywa się w terminalu poprzez wywołanie z poziomu folderu 
 python scraper_tvp_links.py --domain=polska --start_page=1 --end_page=4
 ```
 
-![przykładowe wykonanie kodu](demo_links.gif)
+![demo_links](https://github.com/WiktorSob/scraper-tvp/assets/94312553/c2f23a3c-26f5-47d5-afd5-32d77505719a)
 
 ---
 ### pobieranie zawartości linków (pełnych artykułów)
@@ -146,7 +146,7 @@ Program `scraper_tvp_content.py` również uruchamiany jest z kilkoma parametram
 * `batch_size` odpowiada za ilość pobieranych linków w jednym wykonaniu. Każdy `batch` tworzy zadaną ilość procesów, które istnieją do końca pobierania danej serii.
 * `n_batches` odpowiada za ilość serii do pobrania.
 
-Przykładowo, przy `batch_size = 64`, `n_batches = 4` i `n_workers = 4` w jednym wywołaniu programu zostanie pobrana zawartość 256 artykułów przy wykorzystaniu 4 procesów.  
+Przykładowo, przy `batch_size=64`, `n_batches=4` i `n_workers=4` w jednym wywołaniu programu zostanie pobrana zawartość 256 artykułów przy wykorzystaniu 4 procesów.  
 
 Opis poszczególnych parametrów można wyświetlić następująco:
 
@@ -160,12 +160,12 @@ W celu wykonania programu należy z poziomu folderu `src` wykonać komendę:
 python scraper_tvp_content.py --n_workers=2 --n_batches=2 --batch_size=16
 ```
 
-![[demo_content.gif]]
+![demo_content](https://github.com/WiktorSob/scraper-tvp/assets/94312553/eaa8fa87-8cb6-448c-b0c1-919b942e447b)
 
 ---
 ## Dostęp do danych
 
-Pozyskane dane zostały opublikowane na platformie `Hugging Face`. Można je pobrać [stąd](https://huggingface.co/datasets/WiktorS/polish-news), bądź wczytać bezpośrednio z poziomu kodu wykorzystując do tego API platformy :
+Pozyskane dane zostały opublikowane na platformie `Hugging Face 🤗`. Można je pobrać [stąd](https://huggingface.co/datasets/WiktorS/polish-news), bądź wczytać bezpośrednio z poziomu kodu wykorzystując do tego API platformy :
 
 ```bash
 pip install datasets
