@@ -65,7 +65,7 @@ Kod został podzielony na moduły tworzące (przynajmniej w teorii) logiczny uk�
 Role poszczególnych modułów są następujące:
 - [utils](#funkcje-pomocnicze) - zawiera funkcje pomocnicze
 - [links scraper](#links-scraper) - to plik wykonywalny służący do pobrania linków do artyułów z określonej ilości stron z danej domeny.
-- [links scraper](#content-scraper) - plik wykonywalny służący do pobierania treści artykułów
+- [content scraper](#content-scraper) - plik wykonywalny służący do pobierania treści artykułów
 
 📂 `results` zawiera metadane pobrane przez `scraper_links_tvp.py` w postaci pliku `.csv`.
 
