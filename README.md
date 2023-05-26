@@ -6,6 +6,8 @@
 - 🚫 Content processor
 - 🚫 Dokumentacja (eng)
 
+---
+
 ## TLDR - Uproszczona instrukcja
 
 Kod służy do pobrania artykułów z witryny `tvp.info.pl`. W celu wykonania kodu należy z poziomu terminala wywołać poniższe komendy.
@@ -34,7 +36,6 @@ Pobraną zawartość można znaleźć w folderze:
 project/obtained_content
 ```
 ___
-___
 
 ## Cel projektu
 
@@ -45,6 +46,7 @@ Wybór padł na witrynę `tvp.info.pl` z dość prostego powodu - oferuje dostę
 Ostatecznie udało się pozyskać ponad 250 tysięcy arykułów z różnych domen: sport, biznes, polska, świat, społeczeństwo i wiele innych. 
 
 ---
+
 ## Struktura repo
 
 ```
@@ -73,9 +75,8 @@ Role poszczególnych modułów są następujące:
 
 📂 `obtained_content` zawiera plik `.csv`, który zawiera dotychczasowo pobrane treści artykułów wraz z ich metadanymi. Z tego folderu pobierane są ostateczne dane. W każdym wywołaniu kodu `scraper_tvp_content.py` plik jest wczytywany, a następnie każdy `batch` jest dopisywany do pliku. Dodatkowo w tym folderze umieszczono plik `logs.json`, który zawiera informacje o postępie pobierania danych. Każde kolejne wywołanie funkcji zacznie pobieranie zawartości artykułów w miejscu, które zapisane zostało w pliku logów.
 
-
-
 ---
+
 ### 📜 content scraper
 
 Zadaniem programu `scraper_tvp_content.py` jest pobranie treści artykułów z danych linków.
@@ -89,11 +90,13 @@ Po pobraniu każdej serii program odczekuje losową ilość czasu. Prawdopodobie
 Pobrane dane zapisywane są do pliku z roszerzeniem `.csv`. Przy kolejnym wywołaniu funkcja z pliku `logs.json` wczytuje stan ostatniego wykonania i zaczyna pobierać dane od tego miejsca. 
 
 ---
+
 ### 📜 links scraper
 
 Program `scrper_tvp_links.py` pobiera linki do artykułów z danej domeny ze stron o numerach zadeklarowanych przez użytkownika. Linki wraz z tytułem oraz leadem artykułu zapisywane są do pliku z roszerzeniem `.csv`. Pobrane dane wczytywane są następnie przez moduł `scraper_tvp_content.py` i przez niego pobierane są zawartości artykułów.
 
 ---
+
 ### 📜 utils 
 
 Moduł pomocniczy zawiera różne funkcje związane z wykonywaniem kodu.
@@ -109,7 +112,7 @@ Poniżej przedstawiono schematyczny przepływ danych. `link_scraper.py` wysyła 
 
 ## Przykładowe użycie
 
-### Przygotowanie środowiska
+### 1. Przygotowanie środowiska
 
 W celu przygotowania środowiska należy wykonać poniższe komendy w terminalu:
 
@@ -119,7 +122,7 @@ conda activate scraper-env
 pip install -r requirements.txt
 ```
 
-### pobieranie linków do artykułów
+### 2. pobieranie linków do artykułów
 
 Moduł `scrper_tvp_links.py` wywoływany jest z kilkoma parametrami. Są one ustawiane w momencie uruchamiania programu w terminalu.
 
@@ -138,7 +141,8 @@ python scraper_tvp_links.py --domain=polska --start_page=1 --end_page=4
 ![demo_links](https://github.com/WiktorSob/scraper-tvp/assets/94312553/c2f23a3c-26f5-47d5-afd5-32d77505719a)
 
 ---
-### pobieranie zawartości linków (pełnych artykułów)
+
+### 3. pobieranie zawartości linków (pełnych artykułów)
 
 Program `scraper_tvp_content.py` również uruchamiany jest z kilkoma parametrami:
 
@@ -163,6 +167,7 @@ python scraper_tvp_content.py --n_workers=2 --n_batches=2 --batch_size=16
 ![demo_content](https://github.com/WiktorSob/scraper-tvp/assets/94312553/eaa8fa87-8cb6-448c-b0c1-919b942e447b)
 
 ---
+
 ## Dostęp do danych
 
 Pozyskane dane zostały opublikowane na platformie `Hugging Face 🤗`. Można je pobrać [stąd](https://huggingface.co/datasets/WiktorS/polish-news), bądź wczytać bezpośrednio z poziomu kodu wykorzystując do tego API platformy :
@@ -176,3 +181,5 @@ from datasets import load_dataset
 
 dataset = load_dataset("WiktorS/polish-news")
 ```
+
+---
