@@ -86,6 +86,7 @@ The retrieved data is saved in a file with the `.csv` extension. Upon the next f
 ### 📜 links_scraper
 
 The program `scraper_tvp_links.py` retrieves links to articles from a specified domain from pages with numbers declared by the user. The links, along with the article title and lead, are saved in a file with the `.csv` extension. The retrieved data is then loaded by the `scraper_tvp_content.py` module, which retrieves the content of the articles using those links.
+
 ---
 
 ### 📜 utils 
