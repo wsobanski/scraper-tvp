@@ -18,6 +18,22 @@ import os
 
 
 def file_processor(in_path = '../results', out_path = '../articles_metadata'):
+    """FIle processor task is to join multiple .csv files with obtained metadata
+    and save them in one file in specified location.
+    
+    params:
+    
+    in_path (str): Path to folder where metadata files are stored
+    out_path (str): Path to foledr where created file will be placed
+    
+    returns: 
+    
+    df (panda.DataFrame): saved dataframe
+    
+    """
+
+    
+    
     file_list = []
     dfs=[]
     if os.path.exists(in_path):
@@ -40,9 +56,24 @@ def file_processor(in_path = '../results', out_path = '../articles_metadata'):
     
  
     
-def batch(batch_size, n_workers, metadata_df):
+def batch(batch_size : int, n_workers : int, metadata_df : pd.DataFrame):
     """
     calls function for obtaining content from given link.
+    Batch spawns declared number of processes and divide task of obtaining
+    articles on them. One batch starts with loading logs, metadata and artciles
+    that has been already obtained. Then declared numer of processes is spawned.
+    After obtaining content, logs and file with articles is being updated.
+    
+    params:
+    
+    batch_size (int): number of links to be obtained in one batch
+    n_workers (int): number of separate processes to run the task on
+    metadata_df (pd.DataFrame): data frame with metadata and links to articles
+    
+    returns:
+    
+    ---
+    
     """
     
     links = metadata_df.link
