@@ -5,10 +5,8 @@ import unicodedata
 import requests
 import re
 
-
 from random import random, randrange
 
-# from unidecode import unidecode
 from bs4 import BeautifulSoup
 from random_user_agent.user_agent import UserAgent
 from random_user_agent.params import Popularity
@@ -113,6 +111,7 @@ def get_content(link : str, title : str, headline : str):
     soup = get_website(link)
     text_parts = soup.find_all('p', {'class' : "am-article__text article__width"})
     full_content = ' '.join([bit.get_text() for bit in text_parts])
+    
     return {'link' : link,
             'title' : title,
             'headline' : headline,

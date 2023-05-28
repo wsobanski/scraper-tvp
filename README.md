@@ -1,120 +1,111 @@
-## status projektu
-- ✅ Dokumentacja
-- ✅ Link scraper 
-- ✅ Content scraper
-- ✅ pickle ➡ csv 
-- 🚫 Content processor
-- 🚫 Dokumentacja (eng)
+## TLDR - Quick start
 
----
+The code can be used to download articles from `tvp.info.pl`. To execute the code, call the following commands from the terminal.
 
-## TLDR - Uproszczona instrukcja
-
-Kod służy do pobrania artykułów z witryny `tvp.info.pl`. W celu wykonania kodu należy z poziomu terminala wywołać poniższe komendy.
-
-### przygotowanie środowiska:
+### Environment setup:
 
 ```bash
 conda create -n scraper-env python=3.11
 conda activate scraper-env
 pip install -r requirements.txt
 ```
+Please execute these commands directly from the `src` folder:
 
-### pobranie metadanych:
+### Download metadata:
 
 ```bash
 python scraper_tvp_links.py --domain=polska --start_page=1 --end_page=10
 ```
 
-### pobranie zawartości artykułów:
+### Download articles contents:
 
 ```bash
 python scraper_tvp_content.py --n_workers=2 --n_batches=2 --batch_size=16
 ```
-Pobraną zawartość można znaleźć w folderze:
+The downloaded content can be found in a folder:
 ```bash
 project/obtained_content
 ```
 ___
 
-## Cel projektu
+## Goal of the project
 
-Celem projektu było pobranie dużej ilości danych tekstowych w celu dostarczenia danych treningowych dla modelu językowego, którego celem miało być generowanie streszczenia tekstu.
+The aim of the project was to retrieve a large amount of textual data in order to provide training data for a language model whose goal was to generate text summaries.
 
-Wybór padł na witrynę `tvp.info.pl` z dość prostego powodu - oferuje dostęp do danych archiwalnych z lat 2006 - 2023 w sposób nieodpłatny. Dane postanowiono zgromadzić wykorzystując do tego techniki web scrapingu. Projekt obejmuje proces przygotowania kodu potrzebnego do pozyskania danych w sposób zautomatyzowany i efektywny.  
+The choice fell on the website `tvp.info.pl` for a fairly simple reason - it offers free access to archival data from 2006 to 2023. It was decided to gather the data using web scraping techniques. The project involves the process of preparing the necessary code to retrieve the data in an automated and efficient manner.
 
-Ostatecznie udało się pozyskać ponad 250 tysięcy arykułów z różnych domen: sport, biznes, polska, świat, społeczeństwo i wiele innych. 
+In the end, over 250,000 articles from various domains were successfully acquired: sports, business, Poland, world, society, and many others.
 
 ---
 
-## Struktura repo
+## Repo structure
 
 ```
 📦 scraper-tvp
-┣📂 articles metadata - połączone metadane
+┣📂 articles metadata - joined metadata
 ┃ ┗ 📜 joined_metadata_files.csv
-┣📂obtained content - logi wykonania scrapera i finalny plik
+┣📂obtained content - logs and full contents
 ┃ ┣ 📜 full_results.csv
 ┃ ┗ 📜 logs.json
-┣📂 results - pobrane metadane w osobnych plikach
+┣📂 results - metadata in separate files
 ┃ ┗ 📜 results_domain_start-page-last-page.csv
-┗📂 src - kod
+┗📂 src - code
   ┣ 📜 scraper_tvp_content.py
   ┣ 📜 scraper_tvp_links.py 
   ┗ 📜 text_processing.py (TODO)
 ```
-Kod został podzielony na moduły tworzące (przynajmniej w teorii) logiczny układ.  
-Role poszczególnych modułów są następujące:
-- [utils](#funkcje-pomocnicze) - zawiera funkcje pomocnicze
-- [links scraper](#links-scraper) - to plik wykonywalny służący do pobrania linków do artyułów z określonej ilości stron z danej domeny.
-- [content scraper](#content-scraper) - plik wykonywalny służący do pobierania treści artykułów
 
-📂 `results` zawiera metadane pobrane przez `scraper_links_tvp.py` w postaci pliku `.csv`.
+The code has been divided into modules that create (at least in theory) a logical structure.
+The roles of individual modules are as follows:
+- [utils](#funkcje-pomocnicze) - contains utility functions,
+- [links scraper](#links-scraper) - an executable file used to retrieve links to articles from a specified number of pages within a given domain,
+- [content scraper](#content-scraper) - an executable file used to retrieve the content of articles.
 
-📂 `articles_metadata` zawiera plik, który jest wynikiem połączenia plików z folderu `results`. Przechowywany jest w nim plik, z którego `scraper_tvp_content.py` wczytuje metadane dotyczące artykułów i pobiera ich zawartość.
+📂 `results` contains metadata obtained by `scraper_links_tvp.py` in a `.csv` file format.
 
-📂 `obtained_content` zawiera plik `.csv`, który zawiera dotychczasowo pobrane treści artykułów wraz z ich metadanymi. Z tego folderu pobierane są ostateczne dane. W każdym wywołaniu kodu `scraper_tvp_content.py` plik jest wczytywany, a następnie każdy `batch` jest dopisywany do pliku. Dodatkowo w tym folderze umieszczono plik `logs.json`, który zawiera informacje o postępie pobierania danych. Każde kolejne wywołanie funkcji zacznie pobieranie zawartości artykułów w miejscu, które zapisane zostało w pliku logów.
+📂 `articles_metadata` contains a file that is the result of merging files from the `results` folder. It stores a file from which `scraper_tvp_content.py` reads metadata about articles and retrieves their content.
 
----
-
-### 📜 content scraper
-
-Zadaniem programu `scraper_tvp_content.py` jest pobranie treści artykułów z danych linków.
-
-Program przygotowuje plik z metadanymi artykułów - scala wiele plików w jeden a następnie je wczytuje i pobiera zawartość linków. Dane pobierane są równolegle przy wykorzystaniu zadanej przez użytkownika ilości procesów.
-
-W celu uniknięcia utraty danych na wskutek potencjalnej awarii lub niepowodzenia w pobraniu danych program pobiera dane w seriach o określonej z góry wielkości. Każde kolejne wywołanie funkcji nie wpływa na dotychczasowo pobrane dane, gdyz funkcja jedynie dopisuje nowe rekordy do pliku.
-
-Po pobraniu każdej serii program odczekuje losową ilość czasu. Prawdopodobieństwo odczekiwania przez dłuższy czas jest mniejsze niż odczekiwanie przez krótki okres czasu.
-
-Pobrane dane zapisywane są do pliku z roszerzeniem `.csv`. Przy kolejnym wywołaniu funkcja z pliku `logs.json` wczytuje stan ostatniego wykonania i zaczyna pobierać dane od tego miejsca. 
+📂 `obtained_content` contains a `.csv` file that includes the previously obtained article content along with their metadata. The final data is retrieved from this folder. In each execution of the `scraper_tvp_content.py` code, the file is loaded, and each batch is appended to the file. Additionally, a `logs.json` file is placed in this folder, which contains information about the progress of the data retrieval. Each subsequent function call will resume the retrieval of article content from the position saved in the log file.
 
 ---
 
-### 📜 links scraper
+### 📜 content_scraper
 
-Program `scrper_tvp_links.py` pobiera linki do artykułów z danej domeny ze stron o numerach zadeklarowanych przez użytkownika. Linki wraz z tytułem oraz leadem artykułu zapisywane są do pliku z roszerzeniem `.csv`. Pobrane dane wczytywane są następnie przez moduł `scraper_tvp_content.py` i przez niego pobierane są zawartości artykułów.
+The task of the `scraper_tvp_content.py` program is to retrieve the content of articles from the provided links.
 
+The program prepares a file containing the metadata of the articles. It combines multiple files into one and then reads and retrieves the content from the links. The data retrieval is done in parallel using the number of processes specified by the user.
+
+To prevent data loss in case of potential failures or unsuccessful data retrieval, the program fetches data in batches of a predetermined size. Each subsequent function call does not affect the previously retrieved data, as the function only appends new records to the file.
+
+After retrieving each batch, the program waits for a random period of time. The probability of waiting for a longer time is lower than waiting for a shorter period.
+
+The retrieved data is saved in a file with the `.csv` extension. Upon the next function call, the program reads the state of the last execution from the `logs.json` file and resumes data retrieval from that point.
+
+---
+
+### 📜 links_scraper
+
+The program `scraper_tvp_links.py` retrieves links to articles from a specified domain from pages with numbers declared by the user. The links, along with the article title and lead, are saved in a file with the `.csv` extension. The retrieved data is then loaded by the `scraper_tvp_content.py` module, which retrieves the content of the articles using those links.
 ---
 
 ### 📜 utils 
 
-Moduł pomocniczy zawiera różne funkcje związane z wykonywaniem kodu.
+The utility module contains various functions related to code execution.
 
 ---
 
-## Przepływ danych
+## Data flow
 
-Poniżej przedstawiono schematyczny przepływ danych. `link_scraper.py` wysyła zapytanie do strony i zwraca linki do artykułów, które następnie są zapisywane do pliku `.csv`. Każde wywołanie programu tworzy nowy plik. Wszystkie pliki są następnie łączone w jeden, który wczytywany jest przez `content_scraper.py`. Scraper ponownie łączy się ze stroną (tym razem za pośrednictwem linku do artykułów) i w rezultacie zwraca plik z pobranymi danymi. Dodatkowo generowany jest plik z logami, który weryfikowany jest przy każdym kolejnym wywołaniu funkcji.
+Below is a schematic data flow. `link_scraper.py` sends a request to the webpage and returns the links to the articles, which are then saved to a `.csv` file. Each program execution creates a new file. All the files are later merged into one, which is then loaded by `content_scraper.py`. The scraper connects to the webpage again (this time using the article links) and returns a file with the retrieved data. Additionally, a log file is generated, which is checked with each subsequent function call.
 
 ![dataflow](https://github.com/WiktorSob/scraper-tvp/assets/94312553/60ca5c69-e353-4b83-b774-5fe526be9dc6)
 
 
-## Przykładowe użycie
+## Full demo
 
-### 1. Przygotowanie środowiska
+### 1. Environment setup
 
-W celu przygotowania środowiska należy wykonać poniższe komendy w terminalu:
+To prepare the environment, please execute the following commands in the terminal:
 
 ```bash
 conda create -n scraper-env python=3.11
@@ -122,17 +113,17 @@ conda activate scraper-env
 pip install -r requirements.txt
 ```
 
-### 2. pobieranie linków do artykułów
+### 2. Obtaining links to articles
 
-Moduł `scrper_tvp_links.py` wywoływany jest z kilkoma parametrami. Są one ustawiane w momencie uruchamiania programu w terminalu.
+The module `scrper_tvp_links.py` is called with several parameters. They are set at the moment of running the program in the terminal.
 
-* `domain` - sekcja, z której mają zostać pobrane linki. Dostępne (i przetestowane) opcje to biznes, polska, swiat, spoleczenstwo, sport oraz kultura.
-* `start_page` - numer strony, od którego program ma zacząć pobierać linki
-* `end_page` - numer ostatniej strony do pobrania
+* `domain` - the section from which the links are to be extracted. Available (and tested) options are biznes, polska, swiat, spoleczenstwo, sport, and kultura.
+* `start_page` - the page number from which the program should start retrieving links.
+* `end_page` - the last page number to be fetched.
 
-Pobrane metadane przechowywane są w pliku  `results_<domena>_<strona-startowa>-<strona-koncowa>.csv` i zawierają informacje o linku do artykułu, tytule oraz leadzie.
+The retrieved metadata is stored in a file named `results_<domain>_<start-page>-<end-page>.csv`, which contains information about the articles' link, title, and lead.
 
-Wykonanie programu odbywa się w terminalu poprzez wywołanie z poziomu folderu `src` komend:
+The program is executed in the terminal by invoking the following commands from the `src` folder:
 
 ```bash
 python scraper_tvp_links.py --domain=polska --start_page=1 --end_page=4
@@ -142,23 +133,23 @@ python scraper_tvp_links.py --domain=polska --start_page=1 --end_page=4
 
 ---
 
-### 3. pobieranie zawartości linków (pełnych artykułów)
+### 3. Obtaining contents of articles
 
-Program `scraper_tvp_content.py` również uruchamiany jest z kilkoma parametrami:
+The program `scraper_tvp_content.py` is also executed with several parameters:
 
-* `n_workers` odpowiada za ilość procesów, przy użyciu których wykonywany będzie kod. Domyślnie ustawiona jest ona na ilość dostępnych rdzeni. 
-* `batch_size` odpowiada za ilość pobieranych linków w jednym wykonaniu. Każdy `batch` tworzy zadaną ilość procesów, które istnieją do końca pobierania danej serii.
-* `n_batches` odpowiada za ilość serii do pobrania.
+* `n_workers` controls the number of processes used to execute the code. By default, it is set to the number of available CPU cores.
+* `batch_size` determines the number of links fetched in one execution. Each batch creates a specified number of processes that exist until the completion of downloading a given series.
+* `n_batches` defines the number of series to be downloaded.
 
-Przykładowo, przy `batch_size=64`, `n_batches=4` i `n_workers=4` w jednym wywołaniu programu zostanie pobrana zawartość 256 artykułów przy wykorzystaniu 4 procesów.  
+For example, with `batch_size=64`, `n_batches=4`, and `n_workers=4`, a total of 256 articles will be downloaded in one program invocation using 4 processes.
 
-Opis poszczególnych parametrów można wyświetlić następująco:
+You can display the description of each parameter as follows:
 
 ```bash
 python scraper_tvp_content.py --help
 ```
 
-W celu wykonania programu należy z poziomu folderu `src` wykonać komendę:
+To execute the program, you need to run the following command from the `src` folder:
 
 ```bash
 python scraper_tvp_content.py --n_workers=2 --n_batches=2 --batch_size=16
@@ -168,9 +159,9 @@ python scraper_tvp_content.py --n_workers=2 --n_batches=2 --batch_size=16
 
 ---
 
-## Dostęp do danych
+## Data access 
 
-Pozyskane dane zostały opublikowane na platformie `Hugging Face 🤗`. Można je pobrać [stąd](https://huggingface.co/datasets/WiktorS/polish-news), bądź wczytać bezpośrednio z poziomu kodu wykorzystując do tego API platformy :
+All obtained data has been published to `Hugging Face 🤗` platform. You can download the dataset [here](https://huggingface.co/datasets/WiktorS/polish-news), or load it directly using datasets API:
 
 ```bash
 pip install datasets

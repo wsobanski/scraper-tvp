@@ -1,11 +1,15 @@
-from utils import obtain_info
-from time import time
-import argparse
 import os
-from time import sleep
 import pickle
+import argparse
+from time import time
+from time import sleep
 from random import random, randrange
+
 import pandas as pd
+
+from utils import obtain_info
+
+
 
 def job(page_link : str, start_page : int, end_page : int, domain : str):
     """

@@ -1,19 +1,19 @@
-from utils import get_content
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
-from time import time
-import pickle
+import os
+import json
+import pathlib
 import argparse
+import pickle
+from os import cpu_count
+from time import time
 from time import sleep
 from random import random, randint
-from tqdm import tqdm
-from os import cpu_count
-import os
-import pathlib
-import pandas as pd
-import json
-from loguru import logger
-import os
 
+from tqdm import tqdm
+import pandas as pd
+from loguru import logger
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+
+from utils import get_content
 
 
 
@@ -30,10 +30,7 @@ def file_processor(in_path = '../results', out_path = '../articles_metadata'):
     
     df (panda.DataFrame): saved dataframe
     
-    """
-
-    
-    
+    """    
     file_list = []
     dfs=[]
     if os.path.exists(in_path):
@@ -49,9 +46,11 @@ def file_processor(in_path = '../results', out_path = '../articles_metadata'):
             path = in_path + '/' + f
             data = pd.read_csv(path)
             dfs.append(data)
+            
         df = pd.concat(dfs)
         df = df[['link', 'title', 'lead']]
         df.to_csv(out_path+ '/' + 'articles_metadata.csv', index=False)
+        
         return df
     
  
@@ -75,7 +74,6 @@ def batch(batch_size : int, n_workers : int, metadata_df : pd.DataFrame):
     ---
     
     """
-    
     links = metadata_df.link
     titles = metadata_df.title
     headlines = metadata_df.lead
