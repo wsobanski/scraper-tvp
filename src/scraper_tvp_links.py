@@ -53,7 +53,7 @@ def job(page_link : str, start_page : int, end_page : int, domain : str):
         sleep(random()*randrange(1,3))
     
     res = (result_links, result_leads, result_titles)
-    save_path = f'{os.pardir}/results/results_{domain}_{start_page}-{end_page}.csv'
+    save_path = f'../results/results_{domain}_{start_page}-{end_page}.csv'
     
     # with open(save_path, 'wb') as f:
     #     pickle.dump(res, f)
@@ -83,7 +83,7 @@ def main():
     
     tvp_link = 'https://www.tvp.info/{domain}?page={page}'
 
-    save_path = os.pardir + '../results'
+    save_path = '../results'
     if os.path.exists(save_path) == False:
         os.makedirs(save_path)
 
