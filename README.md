@@ -51,7 +51,8 @@ In the end, over 250,000 articles from various domains were successfully acquire
 ┃ ┗ 📜 results_domain_start-page-last-page.csv
 ┗📂 src - code
   ┣ 📜 scraper_tvp_content.py
-  ┣ 📜 scraper_tvp_links.py 
+  ┣ 📜 scraper_tvp_links.py
+  ┣ 📜 utils.py
   ┗ 📜 text_processing.py (TODO)
 ```
 
