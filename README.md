@@ -1,3 +1,6 @@
+
+:warning: **After changes in the page layout, `scraper_links` does not work at the moment!**
+
 ## TLDR - Quick start
 
 The code can be used to download articles from `tvp.info.pl`. To execute the code, call the following commands from the terminal.
